@@ -72,7 +72,11 @@ class Blender(DataParser):
         image_filenames = []
         poses = []
         for frame in meta["frames"]:
-            fname = self.data / Path(frame["file_path"].replace("./", "") + ".png")
+            fine_name = frame["file_path"].replace("./", "")
+            if fine_name[-4:] != '.png':
+                fine_name = fine_name + '.png'
+            # print(f'fine_name is {fine_name}, last 4 chars are {fine_name[-4:]}')
+            fname = self.data / Path(fine_name)
             image_filenames.append(fname)
             poses.append(np.array(frame["transform_matrix"]))
         poses = np.array(poses).astype(np.float32)
