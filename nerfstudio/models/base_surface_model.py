@@ -505,10 +505,10 @@ class SurfaceModel(Model):
 
         psnr = self.psnr(image, rgb)
         ssim = self.ssim(image, rgb)
-        lpips = self.lpips(image, rgb)
+        # lpips = self.lpips(image, rgb)
 
         # all of these metrics will be logged as scalars
         metrics_dict = {"psnr": float(psnr.item()), "ssim": float(ssim)}  # type: ignore
-        metrics_dict["lpips"] = float(lpips)
+        # metrics_dict["lpips"] = float(lpips)
 
         return metrics_dict, images_dict
