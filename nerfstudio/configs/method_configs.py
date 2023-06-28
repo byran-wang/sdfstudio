@@ -451,7 +451,7 @@ method_configs["neus-facto"] = Config(
         steps_per_eval_batch=5000,
         steps_per_save=20000,
         steps_per_eval_all_images=1000000,  # set to a very large model so we don't eval with all images
-        max_num_iterations=100_001,
+        max_num_iterations=30_001,
         mixed_precision=False,
     ),
     pipeline=VanillaPipelineConfig(
@@ -480,15 +480,15 @@ method_configs["neus-facto"] = Config(
     optimizers={
         "proposal_networks": {
             "optimizer": AdamOptimizerConfig(lr=1e-2, eps=1e-15),
-            "scheduler": MultiStepSchedulerConfig(max_steps=100_000),
+            "scheduler": MultiStepSchedulerConfig(max_steps=30_000),
         },
         "fields": {
             "optimizer": AdamOptimizerConfig(lr=5e-4, eps=1e-15),
-            "scheduler": NeuSSchedulerConfig(warm_up_end=500, learning_rate_alpha=0.05, max_steps=100_000),
+            "scheduler": NeuSSchedulerConfig(warm_up_end=500, learning_rate_alpha=0.05, max_steps=30_000),
         },
         "field_background": {
             "optimizer": AdamOptimizerConfig(lr=5e-4, eps=1e-15),
-            "scheduler": NeuSSchedulerConfig(warm_up_end=500, learning_rate_alpha=0.05, max_steps=100_000),
+            "scheduler": NeuSSchedulerConfig(warm_up_end=500, learning_rate_alpha=0.05, max_steps=30_000),
         },
     },
     viewer=ViewerConfig(num_rays_per_chunk=1 << 15),
