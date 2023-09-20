@@ -129,7 +129,7 @@ class SDFFieldConfig(FieldConfig):
     """Number of hidden dimension of geometric network"""
     geo_feat_dim: int = 256
     """Dimension of geometric feature"""
-    num_layers_color: int = 2
+    num_layers_color: int = 4
     """Number of layers for color network"""
     hidden_dim_color: int = 256
     """Number of hidden dimension of color network"""
