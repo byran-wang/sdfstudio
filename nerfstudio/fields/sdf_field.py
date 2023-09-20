@@ -181,7 +181,7 @@ class SDFFieldConfig(FieldConfig):
     """number of features per level for multi-resolution hash grids"""
     hash_smoothstep: bool = True
     """whether to use smoothstep for multi-resolution hash grids"""
-    use_position_encoding: bool = False
+    use_position_encoding: bool = True
     """whether to use positional encoding as input for geometric network"""
 
 
