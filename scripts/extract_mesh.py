@@ -77,7 +77,7 @@ class ExtractMesh:
             )
 
             def inv_contract(x):
-                mag = torch.linalg.norm(x, ord=pipeline.model.scene_contraction.order, dim=-1)
+                mag = torch.linalg.norm(x, dim=-1)
                 mask = mag >= 1
                 x_new = x.clone()
                 x_new[mask] = (1 / (2 - mag[mask][..., None])) * (x[mask] / mag[mask][..., None])
