@@ -54,7 +54,7 @@ class VanillaDataManagerConfig(InstantiateConfig):
     """target class to instantiate"""
     dataparser: AnnotatedDataParserUnion = BlenderDataParserConfig()
     """specifies the dataparser used to unpack the data"""
-    train_num_rays_per_batch: int = 1024
+    train_num_rays_per_batch: int = 1024 # origin 2048
     """number of rays per batch to use per training iteration"""
     train_num_images_to_sample_from: int = -1
     """number of images to sample during training iteration"""

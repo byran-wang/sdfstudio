@@ -123,13 +123,13 @@ class SDFFieldConfig(FieldConfig):
     """Nerfacto Model Config"""
 
     _target: Type = field(default_factory=lambda: SDFField)
-    num_layers: int = 8
+    num_layers: int = 2
     """Number of layers for geometric network"""
     hidden_dim: int = 256
     """Number of hidden dimension of geometric network"""
-    geo_feat_dim: int = 256
+    geo_feat_dim: int = 64
     """Dimension of geometric feature"""
-    num_layers_color: int = 4
+    num_layers_color: int = 2
     """Number of layers for color network"""
     hidden_dim_color: int = 256
     """Number of hidden dimension of color network"""
@@ -143,7 +143,7 @@ class SDFFieldConfig(FieldConfig):
     """Whether to use geometric initialization"""
     inside_outside: bool = True
     """whether to revert signed distance value, set to True for indoor scene"""
-    weight_norm: bool = True
+    weight_norm: bool = False
     """Whether to use weight norm for linear laer"""
     use_grid_feature: bool = False
     """Whether to use multi-resolution feature grids"""
@@ -181,7 +181,7 @@ class SDFFieldConfig(FieldConfig):
     """number of features per level for multi-resolution hash grids"""
     hash_smoothstep: bool = True
     """whether to use smoothstep for multi-resolution hash grids"""
-    use_position_encoding: bool = True
+    use_position_encoding: bool = False
     """whether to use positional encoding as input for geometric network"""
 
 
@@ -256,7 +256,7 @@ class SDFField(Field):
             )
         elif self.config.encoding_type == "tensorf_vm":
             print("using tensor vm")
-            self.encoding = TensorVMEncoding(128, 24, smoothstep=smoothstep)
+            self.encoding = TensorVMEncoding(128, 32, smoothstep=smoothstep)
 
         # we concat inputs position ourselves
         self.position_encoding = NeRFEncoding(
@@ -381,8 +381,9 @@ class SDFField(Field):
         """forward the geonetwork"""
         if self.use_grid_feature:
             #TODO normalize inputs depending on the whether we model the background or not
-            positions = (inputs + 2.0) / 4.0
+            # positions = (inputs + 2.0) / 4.0
             # positions = (inputs + 1.0) / 2.0
+            positions = inputs
             feature = self.encoding(positions)
             # mask feature
             if hasattr(self, 'hash_encoding_mask'):
