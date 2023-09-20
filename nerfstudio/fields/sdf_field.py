@@ -258,15 +258,16 @@ class SDFField(Field):
             print("using tensor vm")
             self.encoding = TensorVMEncoding(128, 24, smoothstep=smoothstep)
 
-        # we concat inputs position ourselves
-        self.position_encoding = NeRFEncoding(
-            in_dim=3,
-            num_frequencies=self.config.position_encoding_max_degree,
-            min_freq_exp=0.0,
-            max_freq_exp=self.config.position_encoding_max_degree - 1,
-            include_input=False,
-            off_axis=self.config.off_axis,
-        )
+        if self.config.use_position_encoding:
+            # we concat inputs position ourselves
+            self.position_encoding = NeRFEncoding(
+                in_dim=3,
+                num_frequencies=self.config.position_encoding_max_degree,
+                min_freq_exp=0.0,
+                max_freq_exp=self.config.position_encoding_max_degree - 1,
+                include_input=False,
+                off_axis=self.config.off_axis,
+            )
 
         self.direction_encoding = NeRFEncoding(
             in_dim=3, num_frequencies=4, min_freq_exp=0.0, max_freq_exp=3.0, include_input=True
@@ -275,7 +276,10 @@ class SDFField(Field):
         # TODO move it to field components
         # MLP with geometric initialization
         dims = [self.config.hidden_dim for _ in range(self.config.num_layers)]
-        in_dim = 3 + self.position_encoding.get_out_dim() + self.encoding.n_output_dims
+        if self.config.use_position_encoding:
+            in_dim = 3 + self.position_encoding.get_out_dim() + self.encoding.n_output_dims
+        else:
+            in_dim = 3 + self.encoding.n_output_dims
         dims = [in_dim] + dims + [1 + self.config.geo_feat_dim]
         self.num_layers = len(dims)
         # TODO check how to merge skip_in to config
@@ -389,13 +393,13 @@ class SDFField(Field):
                 feature = feature * self.hash_encoding_mask.to(feature.device)
         else:
             feature = torch.zeros_like(inputs[:, :1].repeat(1, self.encoding.n_output_dims))
-
-        pe = self.position_encoding(inputs)
-        if not self.config.use_position_encoding:
-            pe = torch.zeros_like(pe)
         
-        inputs = torch.cat((inputs, pe, feature), dim=-1)
-
+        if self.config.use_position_encoding:
+            pe = self.position_encoding(inputs)
+            inputs = torch.cat((inputs, pe, feature), dim=-1)
+        else:
+            inputs = torch.cat((inputs, feature), dim=-1)
+        
         x = inputs
 
         for l in range(0, self.num_layers - 1):
