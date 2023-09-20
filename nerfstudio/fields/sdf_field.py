@@ -385,7 +385,8 @@ class SDFField(Field):
             # positions = (inputs + 1.0) / 2.0
             feature = self.encoding(positions)
             # mask feature
-            feature = feature * self.hash_encoding_mask.to(feature.device)
+            if hasattr(self, 'hash_encoding_mask'):
+                feature = feature * self.hash_encoding_mask.to(feature.device)
         else:
             feature = torch.zeros_like(inputs[:, :1].repeat(1, self.encoding.n_output_dims))
 
