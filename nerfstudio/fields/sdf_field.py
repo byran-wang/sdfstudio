@@ -210,8 +210,8 @@ class SDFField(Field):
 
         self.spatial_distortion = spatial_distortion
         self.num_images = num_images
-
-        self.embedding_appearance = Embedding(self.num_images, self.config.appearance_embedding_dim)
+        if self.config.use_appearance_embedding:
+            self.embedding_appearance = Embedding(self.num_images, self.config.appearance_embedding_dim)
         self.use_average_appearance_embedding = use_average_appearance_embedding
         self.use_grid_feature = self.config.use_grid_feature
         self.divide_factor = self.config.divide_factor
@@ -338,7 +338,6 @@ class SDFField(Field):
             in_dim = (
                 self.direction_encoding.get_out_dim()
                 + self.config.geo_feat_dim
-                + self.embedding_appearance.get_out_dim()
             )
         else:
             # point, view_direction, normal, feature, embedding
@@ -347,8 +346,9 @@ class SDFField(Field):
                 + self.direction_encoding.get_out_dim()
                 + 3
                 + self.config.geo_feat_dim
-                + self.embedding_appearance.get_out_dim()
             )
+        if self.config.use_appearance_embedding:
+            in_dim += self.embedding_appearance.get_out_dim()
         if self.config.use_n_dot_v:
             in_dim += 1
 
@@ -554,10 +554,9 @@ class SDFField(Field):
 
         # appearance
         if self.training:
-            embedded_appearance = self.embedding_appearance(camera_indices)
             # set it to zero if don't use it
-            if not self.config.use_appearance_embedding:
-                embedded_appearance = torch.zeros_like(embedded_appearance)
+            if self.config.use_appearance_embedding:
+                embedded_appearance = self.embedding_appearance(camera_indices)
         else:
             if self.use_average_appearance_embedding:
                 embedded_appearance = torch.ones(
@@ -568,19 +567,20 @@ class SDFField(Field):
                     (*directions.shape[:-1], self.config.appearance_embedding_dim), device=directions.device
                 )
         if self.config.use_diffuse_color:
-            h = [
-                d,
-                geo_features.view(-1, self.config.geo_feat_dim),
-                embedded_appearance.view(-1, self.config.appearance_embedding_dim),
-            ]
+                h = [
+                    d,
+                    geo_features.view(-1, self.config.geo_feat_dim),
+                ]
         else:
-            h = [
-                points,
-                d,
-                gradients,
-                geo_features.view(-1, self.config.geo_feat_dim),
-                embedded_appearance.view(-1, self.config.appearance_embedding_dim),
-            ]
+                h = [
+                    points,
+                    d,
+                    gradients,
+                    geo_features.view(-1, self.config.geo_feat_dim),
+                ]
+        
+        if self.config.use_appearance_embedding:
+            h.append(embedded_appearance.view(-1, self.config.appearance_embedding_dim))
 
         if self.config.use_n_dot_v:
             n_dot_v = torch.sum(normals * directions, dim=-1, keepdims=True)
