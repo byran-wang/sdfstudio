@@ -125,7 +125,7 @@ class SDFFieldConfig(FieldConfig):
     _target: Type = field(default_factory=lambda: SDFField)
     num_layers: int = 2
     """Number of layers for geometric network"""
-    hidden_dim: int = 256
+    hidden_dim: int = 64
     """Number of hidden dimension of geometric network"""
     geo_feat_dim: int = 256
     """Dimension of geometric feature"""
