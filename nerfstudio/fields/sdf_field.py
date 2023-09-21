@@ -143,7 +143,7 @@ class SDFFieldConfig(FieldConfig):
     """Whether to use geometric initialization"""
     inside_outside: bool = True
     """whether to revert signed distance value, set to True for indoor scene"""
-    weight_norm: bool = False
+    weight_norm: bool = True
     """Whether to use weight norm for linear laer"""
     use_grid_feature: bool = False
     """Whether to use multi-resolution feature grids"""
