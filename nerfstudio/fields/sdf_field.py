@@ -137,21 +137,21 @@ class SDFFieldConfig(FieldConfig):
     """Dimension of appearance embedding"""
     use_appearance_embedding: bool = False
     """Dimension of appearance embedding"""
-    bias: float = 0.8
+    bias: float = 0.1
     """sphere size of geometric initializaion"""
     geometric_init: bool = True
     """Whether to use geometric initialization"""
-    inside_outside: bool = True
+    inside_outside: bool = False
     """whether to revert signed distance value, set to True for indoor scene"""
     weight_norm: bool = True
     """Whether to use weight norm for linear laer"""
-    use_grid_feature: bool = False
+    use_grid_feature: bool = True
     """Whether to use multi-resolution feature grids"""
     divide_factor: float = 2.0
     """Normalization factor for multi-resolution grids"""
     beta_init: float = 0.1
     """Init learnable beta value for transformation of sdf to density"""
-    encoding_type: Literal["hash", "periodic", "tensorf_vm"] = "hash"
+    encoding_type: Literal["hash", "periodic", "tensorf_vm"] = "tensorf_vm"
     """feature grid encoding type"""
     position_encoding_max_degree: int = 6
     """positional encoding max degree"""
