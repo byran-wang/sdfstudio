@@ -123,7 +123,7 @@ class SDFFieldConfig(FieldConfig):
     """Nerfacto Model Config"""
 
     _target: Type = field(default_factory=lambda: SDFField)
-    num_layers: int = 8
+    num_layers: int = 2
     """Number of layers for geometric network"""
     hidden_dim: int = 256
     """Number of hidden dimension of geometric network"""
