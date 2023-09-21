@@ -131,7 +131,7 @@ class SDFFieldConfig(FieldConfig):
     """Dimension of geometric feature"""
     num_layers_color: int = 2
     """Number of layers for color network"""
-    hidden_dim_color: int = 256
+    hidden_dim_color: int = 64
     """Number of hidden dimension of color network"""
     appearance_embedding_dim: int = 32
     """Dimension of appearance embedding"""
